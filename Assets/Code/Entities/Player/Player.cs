@@ -3,11 +3,44 @@ using System.Collections;
 
 public class Player : Entity {
 
+	public bool interact = false;
+	public Transform lineStart, lineEnd;
+
+	RaycastHit2D interactWith;
+
 	void Start () {
 	
 	}
 
-	void Update () {
+	public void rayCasting()
+	{
+		Debug.DrawLine(lineStart.position, lineEnd.position, Color.green);
+
+		if (Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"))) {
+			interactWith = Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"));
+			interact = true;
+		}
+		else 
+		{
+			interact = false;
+		}
+		if (Input.GetKey (KeyCode.E) && interact == true) 
+		{
+
+			//interactWith.collider.gameObject.
+			//Destroy (interactWith.collider.gameObject);
+
+			SpriteSwap swapper = interactWith.collider.gameObject.GetComponent<SpriteSwap>();
+			if(swapper != null)
+			{
+				swapper.SetSpriteClean();
+			}
+		}
+
+	}
+
+	public void movement()
+	{
 		/*
 		var h = Input.GetAxis("Horizontal");
 		var v = Input.GetAxis ("Vertical");
@@ -16,7 +49,7 @@ public class Player : Entity {
 
 		rigidbody2D.transform.position = new Vector3(xpos, ypos, 0);
 		*/
-
+		
 		if (Input.GetKey (KeyCode.W) || Input.GetKey (KeyCode.UpArrow)) 
 		{
 			rigidbody2D.transform.position += Vector3.up * speed * Time.deltaTime;
@@ -33,5 +66,10 @@ public class Player : Entity {
 		{
 			rigidbody2D.transform.position += Vector3.right * speed * Time.deltaTime;
 		}
+	}
+
+	void Update () {
+		movement();
+		rayCasting();
 	}
 }
