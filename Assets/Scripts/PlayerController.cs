@@ -6,11 +6,13 @@ public class PlayerController : MonoBehaviour {
     public int speed = 4;
     public bool isWalking = false;
     public int rotationOffset = 90;
+    
+    Animator animator;
 
 	// Use this for initialization
 	void Start () {
         rigidbody2D.transform.Rotate(new Vector3(0, 0, 90));
-	
+        animator = this.GetComponent<Animator>();
 	}
 	
 	
@@ -21,6 +23,7 @@ public class PlayerController : MonoBehaviour {
         rigidbody2D.velocity = new Vector2(x * speed, y * speed);
 
         isWalking = rigidbody2D.velocity.sqrMagnitude != 0;
+        animator.SetBool("isWalking", isWalking);
 
         Vector2 mouse = Input.mousePosition;
         Vector2 point = Camera.main.ScreenToWorldPoint(mouse);
