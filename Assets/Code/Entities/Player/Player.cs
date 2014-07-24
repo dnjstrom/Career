@@ -19,6 +19,7 @@ public class Player : Entity {
 		if (Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"))) {
 			interactWith = Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"));
 			interact = true;
+			Debug.Log ("Test");
 		}
 		else 
 		{

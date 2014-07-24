@@ -6,6 +6,12 @@ public class PlayerController : MonoBehaviour {
     public int speed = 4;
     public bool isWalking = false;
     public int rotationOffset = 90;
+	public float angle;
+
+	public bool interact = false;
+	public Transform lineStart, lineEnd;
+	
+	RaycastHit2D interactWith;
     
     Animator animator;
 
@@ -29,8 +35,35 @@ public class PlayerController : MonoBehaviour {
         Vector2 point = Camera.main.ScreenToWorldPoint(mouse);
         float dx = Camera.main.transform.position.x - point.x;
         float dy = Camera.main.transform.position.y - point.y;
-        float angle = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg;
+        angle = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg;
 
         rigidbody2D.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle+rotationOffset));
+		rayCasting ();
+	}
+
+	public void rayCasting()
+	{
+
+		lineEnd.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle+rotationOffset));
+		Debug.DrawLine(lineStart.position, lineEnd.position, Color.green);
+		
+		if (Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"))) {
+			interactWith = Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"));
+			interact = true;
+			Debug.Log ("Test");
+		}
+		else 
+		{
+			interact = false;
+		}
+		if (Input.GetKey (KeyCode.E) && interact == true) 
+		{
+			SpriteSwap swapper = interactWith.collider.gameObject.GetComponent<SpriteSwap>();
+			if(swapper != null)
+			{
+				swapper.SetSpriteClean();
+			}
+		}
+		
 	}
 }
