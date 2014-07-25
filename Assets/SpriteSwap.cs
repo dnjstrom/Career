@@ -3,15 +3,12 @@ using System.Collections;
 
 public class SpriteSwap : MonoBehaviour 
 {
-	public Sprite dirty;
-	public Sprite clean;
-
 	private SpriteRenderer _renderer;
+	private int dirtyLevel;
 	
 	void Start () {
-		_renderer = GetComponent<SpriteRenderer> ();
-
-		_renderer.sprite = dirty;
+		dirtyLevel = GetComponent<Toilet> ().dirtyLevel;
+	
 	}
 	
 	// Update is called once per frame
@@ -19,13 +16,11 @@ public class SpriteSwap : MonoBehaviour
 	
 	}
 
-	public void SetSpriteDirty()
+	public void clean()
 	{
-		_renderer.sprite = dirty;
-	}
-
-	public void SetSpriteClean()
-	{
-		_renderer.sprite = clean;
+		if (dirtyLevel > 0) 
+		{		
+			GetComponent<Toilet>().clean();
+		}
 	}
 }

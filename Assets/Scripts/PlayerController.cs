@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
     public bool isWalking = false;
     public int rotationOffset = 90;
 	public float angle;
+	public bool cleanBool = true;
 
 	public bool interact = false;
 	public Transform lineStart, lineEnd;
@@ -21,7 +22,7 @@ public class PlayerController : MonoBehaviour {
         animator = this.GetComponent<Animator>();
 	}
 	
-	
+
 	void FixedUpdate () {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
@@ -39,31 +40,43 @@ public class PlayerController : MonoBehaviour {
 
         rigidbody2D.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle+rotationOffset));
 		rayCasting ();
+
+
 	}
 
 	public void rayCasting()
 	{
 
-		lineEnd.transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle+rotationOffset));
-		Debug.DrawLine(lineStart.position, lineEnd.position, Color.green);
+				lineEnd.transform.rotation = Quaternion.Euler (new Vector3 (0, 0, angle + rotationOffset));
+				Debug.DrawLine (lineStart.position, lineEnd.position, Color.green);
 		
-		if (Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"))) {
-			interactWith = Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"));
-			interact = true;
-			Debug.Log ("Test");
+				if ((Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"))) ||
+		    (Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Exit")))) {
+						interactWith = Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"));
+						interact = true;
+
+				} else {
+						interact = false;
+				}
+				if (Input.GetKey (KeyCode.E) && interact == true) {
+						try{
+						SpriteSwap swapper = interactWith.collider.gameObject.GetComponent<SpriteSwap> ();
+						if (swapper != null) {
+								if (cleanBool) {
+										swapper.clean ();
+										cleanBool = false;
+								}
+						}
+						} catch {}
+						try{
+						LevelExit le = Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Exit")).collider.gameObject.GetComponent<LevelExit> ();
+						if (le != null && le.levelExit) {
+								Application.LoadLevel ("Scene_level2");
+							}
+						} catch {}
+				}
+				if (Input.GetKey (KeyCode.R) && interact == true) {
+						cleanBool = true;
+				}
 		}
-		else 
-		{
-			interact = false;
-		}
-		if (Input.GetKey (KeyCode.E) && interact == true) 
-		{
-			SpriteSwap swapper = interactWith.collider.gameObject.GetComponent<SpriteSwap>();
-			if(swapper != null)
-			{
-				swapper.SetSpriteClean();
-			}
-		}
-		
-	}
 }

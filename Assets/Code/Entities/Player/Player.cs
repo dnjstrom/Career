@@ -5,6 +5,7 @@ public class Player : Entity {
 
 	public bool interact = false;
 	public Transform lineStart, lineEnd;
+	public float speed;
 
 	RaycastHit2D interactWith;
 
@@ -19,7 +20,6 @@ public class Player : Entity {
 		if (Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"))) {
 			interactWith = Physics2D.Linecast (lineStart.position, lineEnd.position, 1 << LayerMask.NameToLayer ("Toilet"));
 			interact = true;
-			Debug.Log ("Test");
 		}
 		else 
 		{
@@ -34,7 +34,7 @@ public class Player : Entity {
 			SpriteSwap swapper = interactWith.collider.gameObject.GetComponent<SpriteSwap>();
 			if(swapper != null)
 			{
-				swapper.SetSpriteClean();
+				swapper.clean();
 			}
 		}
 
